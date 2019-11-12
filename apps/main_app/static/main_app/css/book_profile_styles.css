@@ -1,0 +1,13 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+nav{
+  margin-bottom: 2%; 
+}
+
+li{
+  margin-left: 7%; 
+}

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Favorite Books</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'main_app/css/book_profile_styles.css' %}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <title>Favorite Books</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-light bg-light justify-content-between navbar-dark bg-dark">
+    <h5 class="h5 text-right text-light"> Welcome, {{user.first_name}}!</h5>
+    <a href="/logout" class="navbar-brand">Log Out</a>
+  </nav>
+  {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        {%if book.uploaded_by.id == user.id%}
+        <form action="/edit_book/{{book.id}}" method="post">
+          {%csrf_token%}
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" name="title" class="form-control" placeholder="{{book.title}}">
+          </div>
+          <p>Added by: {{book.uploaded_by.first_name}} {{book.uploaded_by.last_name}}</p>
+          <p>Added on: {{book.created_at}}</p>
+          <p>Last updated on: {{book.updated_at}}</p>
+          <div class="form-group">
+            <label for="desc">Description</label>
+            <textarea name="desc" cols="5" rows="5" class="form-control">{{book.desc}}</textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+        <form action="/delete_book/{{book.id}}" method="post">
+          {%csrf_token%}
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+        {%csrf_token%}
+        {%else%}
+        <h3 class="h3">{{book.title}}</h3>
+        <p>Added by: {{book.uploaded_by.first_name}} {{book.uploaded_by.last_name}}</p>
+        <p>Added on: {{book.created_at}}</p>
+        <p>Last updated on: {{book.updated_at}}</p>
+        <p>Description: {{book.desc}}</p>
+        {%endif%}
+        <a href="/books">Go Back</a>
+      </div>
+      <div class="col">
+        <h3 class="h3">Users Who Like This Book: </h3>
+        <ul>
+          {%for user_who_liked in book.users_who_like.all%}
+          {%if user in book.users_who_like.all%}
+          <li>{{user_who_liked.first_name}} {{user_who_liked.last_name}} <a
+              href="/unfavorite/{{book.id}}/{{user_who_liked.id}}">Un-Favorite</a></li>
+          {%else%}
+          <li>{{user_who_liked.first_name}} {{user_who_liked.last_name}}</li>
+          <a href="/add_to_favorites/{{book.id}}/{{user_who_liked.id}}">Add to Favorites</a>
+          {%endif%}
+          {%endfor%}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

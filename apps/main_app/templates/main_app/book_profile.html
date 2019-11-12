@@ -33,7 +33,7 @@
           {%csrf_token%}
           <div class="form-group">
             <label for="title">Title</label>
-            <input type="text" name="title" class="form-control" placeholder="{{book.title}}">
+            <input type="text" name="title" class="form-control" value="{{book.title}}">
           </div>
           <p>Added by: {{book.uploaded_by.first_name}} {{book.uploaded_by.last_name}}</p>
           <p>Added on: {{book.created_at}}</p>
@@ -48,7 +48,6 @@
           {%csrf_token%}
           <button type="submit" class="btn btn-danger">Delete</button>
         </form>
-        {%csrf_token%}
         {%else%}
         <h3 class="h3">{{book.title}}</h3>
         <p>Added by: {{book.uploaded_by.first_name}} {{book.uploaded_by.last_name}}</p>
@@ -62,14 +61,16 @@
         <h3 class="h3">Users Who Like This Book: </h3>
         <ul>
           {%for user_who_liked in book.users_who_like.all%}
-          {%if user in book.users_who_like.all%}
+          {%if user == user_who_liked%}
           <li>{{user_who_liked.first_name}} {{user_who_liked.last_name}} <a
               href="/unfavorite/{{book.id}}/{{user_who_liked.id}}">Un-Favorite</a></li>
           {%else%}
           <li>{{user_who_liked.first_name}} {{user_who_liked.last_name}}</li>
-          <a href="/add_to_favorites/{{book.id}}/{{user_who_liked.id}}">Add to Favorites</a>
           {%endif%}
           {%endfor%}
+          {% if user not in book.users_who_like.all %}
+          <a href="/add_to_favorites/{{book.id}}/{{user.id}}">Add to Favorites</a>
+          {%endif%}
         </ul>
       </div>
     </div>
@@ -77,4 +78,4 @@
 
 </body>
 
-</html>
+</html>          
